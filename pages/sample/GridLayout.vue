@@ -79,7 +79,7 @@
                                         }
                                         return 0;
                                     },
-                                    wrappingWidth: 800,
+                                    wrappingWidth: 900,
                                     wrappingColumn: 2,
                                     cellSize:new go.Size(400, 40),
                                     spacing: new go.Size(0, 20),
@@ -88,24 +88,31 @@
                             "SelectionMoved": self.relayoutNodes
                             // other properties are set by the layout function, defined below
                         });
-
+                console.log("go.Shape.getFigureGenerators().toArray()",go.Shape.getFigureGenerators().toArray())
                 self.myDiagram.nodeTemplate =
                     $(go.Node, "Auto",
                         //边框
                         $(go.Shape, "Rectangle",
-                            {fill: "#eee", height: 40, strokeWidth: 0},
-                            new go.Binding("fill", "color"),
-                            new go.Binding("width", "width", function (v) {
-                                console.log(v);
-                                return v * 400
-                            })
+                            {strokeWidth: 2, stroke: 'gray'},
+                            new go.Binding("fill", "color")
                         ),
-
                         //文本
                         $(go.TextBlock,
                             {margin: 5},
                             new go.Binding("text", "key")
-                        )
+                        ),
+                        $(go.Picture,  // the icon showing the logo
+                            // You should set the desiredSize (or width and height)
+                            // whenever you know what size the Picture should be.
+                            { desiredSize: new go.Size(400, 50) },
+                            new go.Binding("source", "key", self.convertKeyImage)),
+                        { // second arg will be this GraphObject, which in this case is the Node itself:
+                            click: function(e, node) {
+                                alert(node.data.key);
+                                console.log("node",node);
+                                node.data.key = "ww";
+                            }
+                        }
                     );
 
                 // initialize the first Palette
@@ -146,7 +153,14 @@
                 const self = this;
                 self.myDiagram.layout.invalidateLayout();
                 self.myDiagram.layoutDiagram();
+            },
+            convertKeyImage(key) {
+                if (!key) {
+                    key = "NE";
+                }
+                return "/static/img/icons/apple-touch-icon-180x180.png";
             }
+
         }
     }
 </script>
